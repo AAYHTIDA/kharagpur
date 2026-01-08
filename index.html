@@ -1,64 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Narrative Consistency Checker</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Narrative Consistency Checker</h1>
-            <p>Check if a character backstory is logically consistent with a novel</p>
-        </header>
-
-        <main>
-            <!-- Input Section -->
-            <section class="input-section">
-                <div class="input-group">
-                    <label for="novel-file">Novel Text File</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="novel-file" accept=".txt,.md" />
-                        <div class="file-status" id="novel-status">No file selected</div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="backstory-file">Hypothetical Backstory File</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="backstory-file" accept=".txt,.md" />
-                        <div class="file-status" id="backstory-status">No file selected</div>
-                    </div>
-                </div>
-
-                <button id="check-btn" class="check-button" disabled>Check Consistency</button>
-            </section>
-
-            <!-- Output Section -->
-            <section class="output-section" id="output-section" style="display: none;">
-                <div class="result-card">
-                    <h2>Consistency Result</h2>
-                    <div class="result-status" id="result-status">
-                        <span class="status-label" id="status-label">CONSISTENT</span>
-                        <span class="prediction-text" id="prediction-text">Prediction: 1 (Consistent)</span>
-                    </div>
-                </div>
-
-                <!-- Evidence Section -->
-                <div class="evidence-card">
-                    <div class="evidence-header" id="evidence-header">
-                        <h3>Evidence Summary</h3>
-                        <button class="toggle-btn" id="toggle-btn">▼</button>
-                    </div>
-                    <div class="evidence-content" id="evidence-content">
-                        <ul id="evidence-list"></ul>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script src="script.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
