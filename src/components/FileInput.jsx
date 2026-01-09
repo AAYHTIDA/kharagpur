@@ -12,19 +12,19 @@ function FileInput({ label, status, onFileLoad, onStatusChange }) {
     
     if (!file) {
       onStatusChange({ text: 'No file selected', type: '' })
-      onFileLoad('')
+      onFileLoad('', '')
       return
     }
     
     if (!file.name.match(/\.(txt|md)$/i)) {
       onStatusChange({ text: 'Please select a .txt or .md file', type: 'error' })
-      onFileLoad('')
+      onFileLoad('', '')
       return
     }
     
     if (file.size > 10 * 1024 * 1024) {
       onStatusChange({ text: 'File too large (max 10MB)', type: 'error' })
-      onFileLoad('')
+      onFileLoad('', '')
       return
     }
     
@@ -32,11 +32,11 @@ function FileInput({ label, status, onFileLoad, onStatusChange }) {
     
     try {
       const content = await file.text()
-      onFileLoad(content)
+      onFileLoad(content, file.name)
       onStatusChange({ text: `✓ ${file.name} (${formatFileSize(file.size)})`, type: 'loaded' })
     } catch (error) {
       onStatusChange({ text: 'Error reading file', type: 'error' })
-      onFileLoad('')
+      onFileLoad('', '')
     }
   }
 

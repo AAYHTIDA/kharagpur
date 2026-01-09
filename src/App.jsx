@@ -1,36 +1,42 @@
 import { useState } from 'react'
 import FileInput from './components/FileInput'
-import ResultCard from './components/ResultCard'
-import EvidenceCard from './components/EvidenceCard'
-import ReasoningCard from './components/ReasoningCard'
+import CsvInput from './components/CsvInput'
+import ResultsTable from './components/ResultsTable'
 
-const API_URL = 'http://localhost:8000'
+const API_URL = 'http://172.23.114.80:8000'
 
 function App() {
-  const [novelContent, setNovelContent] = useState('')
-  const [backstoryContent, setBackstoryContent] = useState('')
-  const [novelStatus, setNovelStatus] = useState({ text: 'No file selected', type: '' })
-  const [backstoryStatus, setBackstoryStatus] = useState({ text: 'No file selected', type: '' })
+  const [novel1Content, setNovel1Content] = useState('')
+  const [novel2Content, setNovel2Content] = useState('')
+  const [novel1Status, setNovel1Status] = useState({ text: 'No file selected', type: '' })
+  const [novel2Status, setNovel2Status] = useState({ text: 'No file selected', type: '' })
+  const [novel1Name, setNovel1Name] = useState('')
+  const [novel2Name, setNovel2Name] = useState('')
+  const [csvData, setCsvData] = useState(null)
+  const [csvStatus, setCsvStatus] = useState({ text: 'No file selected', type: '' })
   const [isChecking, setIsChecking] = useState(false)
-  const [result, setResult] = useState(null)
+  const [results, setResults] = useState(null)
   const [error, setError] = useState(null)
 
-  const canCheck = novelContent.trim().length > 0 && backstoryContent.trim().length > 0
+  const canCheck = novel1Content.trim().length > 0 && novel2Content.trim().length > 0 && csvData
 
   const handleCheckConsistency = async () => {
     if (!canCheck) return
     
     setIsChecking(true)
     setError(null)
-    setResult(null)
+    setResults(null)
     
     try {
-      const response = await fetch(`${API_URL}/evaluate`, {
+      const response = await fetch(`${API_URL}/evaluate-csv`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          novel_text: novelContent,
-          backstory: backstoryContent
+          novel1_text: novel1Content,
+          novel2_text: novel2Content,
+          novel1_name: novel1Name || 'Novel 1',
+          novel2_name: novel2Name || 'Novel 2',
+          backstories: csvData
         })
       })
       
@@ -40,16 +46,7 @@ function App() {
       }
       
       const data = await response.json()
-      
-      // Transform response to match frontend expectations
-      setResult({
-        consistent: data.verdict === 'CONSISTENT',
-        verdict: data.verdict,
-        prediction: data.prediction,
-        reasoning: data.reasoning,
-        evidence: data.evidence,
-        constraints: data.aggregated_constraints
-      })
+      setResults(data.results)
     } catch (err) {
       setError(err.message || 'Failed to connect to server')
     } finally {
@@ -61,29 +58,41 @@ function App() {
     <div className="container">
       <header>
         <h1>Narrative Consistency Checker</h1>
-        <p>Check if a character backstory is logically consistent with a novel</p>
+        <p>Upload two novels and a CSV of backstories to check consistency</p>
       </header>
 
       <main>
         <section className="input-section">
           <FileInput
-            label="Novel Text File"
-            status={novelStatus}
-            onFileLoad={(content) => setNovelContent(content)}
-            onStatusChange={setNovelStatus}
+            label="Novel 1 Text File"
+            status={novel1Status}
+            onFileLoad={(content, name) => {
+              setNovel1Content(content)
+              setNovel1Name(name.replace(/\.[^/.]+$/, ''))
+            }}
+            onStatusChange={setNovel1Status}
           />
           <FileInput
-            label="Hypothetical Backstory File"
-            status={backstoryStatus}
-            onFileLoad={(content) => setBackstoryContent(content)}
-            onStatusChange={setBackstoryStatus}
+            label="Novel 2 Text File"
+            status={novel2Status}
+            onFileLoad={(content, name) => {
+              setNovel2Content(content)
+              setNovel2Name(name.replace(/\.[^/.]+$/, ''))
+            }}
+            onStatusChange={setNovel2Status}
+          />
+          <CsvInput
+            label="Backstories CSV File"
+            status={csvStatus}
+            onCsvLoad={setCsvData}
+            onStatusChange={setCsvStatus}
           />
           <button
             className="check-button"
             disabled={!canCheck || isChecking}
             onClick={handleCheckConsistency}
           >
-            {isChecking ? 'Analyzing novel... (this may take a while)' : 'Check Consistency'}
+            {isChecking ? 'Analyzing... (this may take a while)' : 'Check Consistency'}
           </button>
           
           {error && (
@@ -93,11 +102,9 @@ function App() {
           )}
         </section>
 
-        {result && (
+        {results && (
           <section className="output-section">
-            <ResultCard result={result} />
-            <ReasoningCard reasoning={result.reasoning} />
-            <EvidenceCard evidence={result.evidence} />
+            <ResultsTable results={results} />
           </section>
         )}
       </main>

@@ -134,3 +134,50 @@ def evaluate_backstory(constraints: dict, backstory: str) -> dict:
             },
             "evidence": []
         }
+
+
+CHARACTER_EXTRACTION_PROMPT = """Extract characters and their backstory claims from this novel excerpt.
+
+TEXT:
+{text}
+
+Return ONLY a JSON array of objects:
+[
+  {{
+    "character": "Character Name",
+    "chapter": "Chapter or section name if mentioned",
+    "claim": "A specific backstory claim about this character"
+  }}
+]
+
+Extract up to 10 character backstory claims. Return ONLY valid JSON array."""
+
+
+def extract_characters_and_claims(novel_text: str, novel_name: str) -> list:
+    """Extract character names and their backstory claims from a novel."""
+    sample = novel_text[:3000]
+    prompt = CHARACTER_EXTRACTION_PROMPT.format(text=sample)
+    
+    try:
+        response_text = call_llm(prompt)
+        text = response_text.strip()
+        if text.startswith("```json"):
+            text = text[7:]
+        elif text.startswith("```"):
+            text = text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+        
+        start = text.find("[")
+        end = text.rfind("]") + 1
+        if start != -1 and end > start:
+            text = text[start:end]
+        
+        claims = json.loads(text)
+        return claims if isinstance(claims, list) else []
+    except Exception as e:
+        print(f"Error extracting characters: {e}")
+        return [
+            {"character": "Main Character", "chapter": "", "claim": "Character exists in the novel"}
+        ]

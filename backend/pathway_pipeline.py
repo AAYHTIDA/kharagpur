@@ -46,7 +46,7 @@ def run_pathway_pipeline(chunks: list[dict], backstory: str = "") -> dict:
         """Pathway UDF for extracting constraints from a chunk."""
         print(f"Processing chunk {chunk_id + 1}/{total_chunks}...")
         result = extract_constraints(chunk_id, chunk_text)
-        time.sleep(12)  # Rate limit friendly
+        time.sleep(3)  # Balance between speed and rate limits
         return json.dumps(result)
     
     # Step 3: Apply Pathway transformation - extract constraints per chunk
