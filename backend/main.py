@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from chunker import chunk_novel, count_tokens
-from pathway_pipeline import run_pathway_pipeline
+from pathway_pipeline_mock import run_pathway_pipeline
 from llm_client import evaluate_backstory, extract_characters_and_claims
 
 app = FastAPI(

@@ -3,7 +3,7 @@ import FileInput from './components/FileInput'
 import CsvInput from './components/CsvInput'
 import ResultsTable from './components/ResultsTable'
 
-const API_URL = 'http://172.23.114.80:8000'
+const API_URL = 'http://localhost:8000'
 
 function App() {
   const [novel1Content, setNovel1Content] = useState('')
@@ -57,7 +57,7 @@ function App() {
   return (
     <div className="container">
       <header>
-        <h1>Narrative Consistency Checker</h1>
+        <h1>Lore Ledger</h1>
         <p>Upload two novels and a CSV of backstories to check consistency</p>
       </header>
 
