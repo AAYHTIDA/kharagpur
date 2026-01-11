@@ -186,7 +186,7 @@ async def evaluate_csv(request: EvaluateCsvRequest):
             constraints = constraints1
         
         # Evaluate the backstory content
-        eval_result = evaluate_backstory(constraints, backstory.content)
+        eval_result = evaluate_backstory(constraints, f"{backstory.character}: {backstory.content}")
         verdict = eval_result.get("verdict", "INCONSISTENT")
         
         # Build rationale from reasoning
